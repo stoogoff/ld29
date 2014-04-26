@@ -1,12 +1,14 @@
-'use strict';
 
 // imports
 var Player = require("../prefabs/Player");
 var config = require("../config");
 
+
 // module vars
 var player, circle, hud;
 
+
+// class
 function Play() {}
 
 Play.prototype = {
