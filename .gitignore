@@ -1,0 +1,11 @@
+
+# directories
+node_modules
+dist
+bower_components
+
+# config and log files
+*.log
+.bowerrc
+.editorconfig
+.jshintrc
