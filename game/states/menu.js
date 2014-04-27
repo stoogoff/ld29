@@ -1,22 +1,31 @@
 
-function Menu() {}
+module.exports = (function() {
+	var config = require("../config");
 
-Menu.prototype = {
-	preload: function() {},
-	create: function() {
-		var style = { font: '65px Arial', fill: '#ffffff', align: 'center'};
+	var Menu = function() {};
 
-		this.titleText = this.game.add.text(this.game.world.centerX, 300, 'Drowning Man', style);
-		this.titleText.anchor.setTo(0.5, 0.5);
+	Menu.prototype = {
+		preload: function() {},
+		create: function() {
+			this.game.stage.backgroundColor = config.BACKGROUND_COLOUR;
 
-		this.instructionsText = this.game.add.text(this.game.world.centerX, 400, 'Click anywhere to play', { font: '16px Arial', fill: '#ffffff', align: 'center'});
-		this.instructionsText.anchor.setTo(0.5, 0.5);
-	},
-	update: function() {
-		if(this.game.input.activePointer.justPressed()) {
-			this.game.state.start('play');
+			ice = this.game.add.image(0, 0, 'ice');
+			ice.blendMode = Phaser.blendModes[config.BLEND_MODE];
+
+			var style = { font: '65px Arial', fill: '#ffffff', align: 'center'};
+
+			this.titleText = this.game.add.text(this.game.world.centerX, 300, 'Drowning Man', style);
+			this.titleText.anchor.setTo(0.5, 0.5);
+
+			this.instructionsText = this.game.add.text(this.game.world.centerX, 400, 'Click anywhere to play', { font: '16px Arial', fill: '#ffffff', align: 'center'});
+			this.instructionsText.anchor.setTo(0.5, 0.5);
+		},
+		update: function() {
+			if(this.game.input.activePointer.justPressed()) {
+				this.game.state.start('play');
+			}
 		}
-	}
-};
+	};
 
-module.exports = Menu;
+	return Menu;
+})();
