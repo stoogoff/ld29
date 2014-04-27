@@ -1,11 +1,14 @@
 
 // imports
 var Player = require("../prefabs/Player");
+var FishGroup = require("../prefabs/Fish");
+var RubbishGroup = require("../prefabs/Rubbish");
+var Status = require("../prefabs/Status");
 var config = require("../config");
 
 
 // module vars
-var player, circle, hud;
+var player, circle, hud, health, fishes, rubbish;
 
 
 // class
@@ -18,16 +21,39 @@ Play.prototype = {
 
 		circle = new Phaser.Circle(this.game.width / 2, this.game.height - 200, 10);
 		player = new Player(this.game, circle.x, circle.y);
-		hud = this.game.add.text(10, 10, "Health: " + player.health, { font: "14px Arial", fill: "#fff"});
+
+		fishes = new FishGroup(this.game);
+		rubbish = new RubbishGroup(this.game);
+
+		health = new Status(this, 10, 10, 150, 15, player, "health");
+
+		this.gen1 = this.game.time.events.loop(Phaser.Timer.SECOND * 2, fishes.addFish, fishes);
+		this.gen1.timer.start();
+
+		this.gen2 = this.game.time.events.loop(Phaser.Timer.SECOND * 5, rubbish.addRubbish, rubbish);
+		this.gen2.timer.start();
 	},
 	update: function() {
-		hud.text = "Health: " + player.health;
+		// the player is dead, end the game
+		if(player.health <= 0) {
+			this.game.state.start('gameover');
+		}
+
+		this.game.physics.arcade.collide(player, fishes, this.collision, null, this);
+		this.game.physics.arcade.collide(player, rubbish, this.collision, null, this);
 	},
-	render: function() {
+	/*render: function() {
 		if(!config.DEBUG)
 			return;
 
 		this.game.debug.geom(circle, 'rgba(255,0,0,1)');
+	},*/
+	collision: function(player, obj) {
+		player.health -= obj.damage;
+		player.staggered(obj.damage * 15);
+
+		// TODO - death state for the object
+		obj.destroy();
 	}
 };
 

@@ -17,7 +17,7 @@ Preload.prototype = {
 		this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
 		this.load.setPreloadSprite(this.asset);
 
-		_.each(["player", "background-texture"], _.bind(function(item) {
+		_.each(["player", "background-texture", "fish", "rubbish"], _.bind(function(item) {
 			this.load.image(item, 'assets/' + item + '.png');
 		}, this));
 

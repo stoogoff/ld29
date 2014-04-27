@@ -14,10 +14,6 @@ var DROWN = 1;
 var EXERTING = 5;
 
 
-// module vars
-var cursors, startPosition;
-
-
 // class
 var Player = function(game, x, y, frame) {
 	Phaser.Sprite.call(this, game, x, y, 'player', frame);
@@ -37,32 +33,39 @@ var Player = function(game, x, y, frame) {
 
 	// instance vars
 	this.exerting = false;
+	this.breathing = false;
 	this.health = HEALTH;
-	
-	// set module vars
-	cursors = game.input.keyboard.createCursorKeys();
-	startPosition = new Phaser.Point(x, y);
+	this.staggering = false;
+
+	this.cursors = game.input.keyboard.createCursorKeys();
+	this.startPosition = new Phaser.Point(x, y);
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
 Player.prototype.constructor = Player;
 
+
+
 Player.prototype.update = function() {
 	this.exerting = false;
-	this.move();
+
+	if(!this.staggering)
+		this.move();
 };
 
 Player.prototype.move = function() {
+	var cursors = this.cursors;
+
 	// left and right movement
 	if(cursors.left.isDown) {
 		// TODO - swim sideways animation
 		this.body.acceleration.x = -ACCELERATION;
-		this.game.add.tween(this).to({angle: -40}, 100).start();
+		this.game.add.tween(this).to({ angle: -40 }, 100).start();
 	}
 	else if(cursors.right.isDown) {
 		// TODO - swim sideways animation
 		this.body.acceleration.x = ACCELERATION;
-		this.game.add.tween(this).to({angle: 40}, 100).start();
+		this.game.add.tween(this).to({ angle: 40 }, 100).start();
 	}
 	else {
 		// TODO - swim animation
@@ -84,19 +87,30 @@ Player.prototype.move = function() {
 		this.body.acceleration.y = ACCELERATION;
 		this.exerting = true;
 	}
-	else if(!Phaser.Math.fuzzyEqual(this.y, startPosition.y, DISTANCE)) {
+	else if(!Phaser.Math.fuzzyEqual(this.y, this.startPosition.y, DISTANCE)) {
 		// TODO - move back to start position
 		// TODO - animation wants to be slower / faster depending on position
-		this.body.acceleration.y = ACCELERATION / 2 * (this.y > startPosition.y ? -1 : 1);
+		this.body.acceleration.y = ACCELERATION / 2 * (this.y > this.startPosition.y ? -1 : 1);
 	}
 	else {
 		this.body.acceleration.y =	0;
 	}
 };
 
+Player.prototype.staggered = function(amount) {
+	this.staggering = true;
+	this.body.acceleration.x = 0;
+	this.body.acceleration.y = amount;
+
+	this.game.time.events.add(1000, function() {
+		this.staggering = false;
+	}, this);
+};
+
 Player.prototype.drown = function() {
-	// TODO - not if the player is in a air hole
-	this.health -= this.exerting ? EXERTING : DROWN;
+	// not if the player is in a air hole
+	if(!this.breathing)
+		this.health -= this.exerting ? EXERTING : DROWN;
 };
 
 module.exports = Player;
