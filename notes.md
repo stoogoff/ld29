@@ -9,25 +9,32 @@ Player
 - Dieing
 
 Ice foreground
+Water background
 Air hole
 Obstacles
 
-- Fish (damage)
+- DONE Fish (damage)
 - Logs (smash - nudge player away)
 
-Pick ups
 
-- Oxygen tank
-- flippers (speed boost)
 
 # TODO
 
 Graphics
 Audio
-Death sequence
-Bubbles
+
+- DONE Music
+- Sfx
+
+Ramp up difficulty
+NOPE Death sequence
+DONE Bubbles
 Readable loading / gameover screens
 Random snappy phrases for the game over screen
 Score
-Picks (flippers, breathing holes, oxygen tanks)
+Pick ups
+
+- flippers
+- DONE breathing holes
+- oxygen tanks
 

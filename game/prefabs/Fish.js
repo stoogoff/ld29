@@ -9,6 +9,10 @@ module.exports = (function() {
 		this.anchor.setTo(0.5, 0.5);
 		this.body.velocity.y = 200 + this.game.rnd.integerInRange(-30, 30);
 
+		this.animations.add('swim');
+		this.animations.play('swim', 10, true);
+
+		// fish specific
 		this.easing = game.rnd.pick(easings);
 		this.target = game.rnd.integerInRange(0, game.width);;
 		this.damage = 10;
@@ -24,14 +28,6 @@ module.exports = (function() {
 		if(this.y > this.game.height + this.height) {
 			this.destroy();
 		}
-
-		// TODO - fish should point in the direction their going
-		//var angle = Phaser.Math.radToDeg(this.game.physics.arcade.angleToXY(this, this.target, this.game.height)) - 90;
-		//var angle = this.game.physics.arcade.angleBetween(this, { x: this.target, y: this.game.height }) - 90;
-
-		//console.log(angle)
-
-		//this.rotation = angle;
 	};
 
 	var FishGroup = function(game, parent) {

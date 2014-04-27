@@ -24,7 +24,7 @@ module.exports = (function() {
 
 			fishes = new FishGroup(this.game);
 			rubbish = new RubbishGroup(this.game);
-			scroller = new Scroller(this.game, 'ice', 2);
+			//scroller = new Scroller(this.game, 'ice', 2);
 			health = new Status(this, 10, 10, 150, 15, player, "health");
 
 			this.gen1 = this.game.time.events.loop(Phaser.Timer.SECOND * 2, fishes.addFish, fishes);
@@ -42,14 +42,20 @@ module.exports = (function() {
 			this.game.physics.arcade.collide(player, fishes, this.collision, null, this);
 			this.game.physics.arcade.collide(player, rubbish, this.collision, null, this);
 
-			scroller.update();
+			//scroller.update();
+			//scroller.inAirHole(player);
 		},
 		/*render: function() {
 			if(!config.DEBUG)
 				return;
 
-			this.game.debug.geom(circle, 'rgba(255,0,0,1)');
+			this.game.debug.text(player.breathing, this.game.width - 50, 20, 'black', 'Arial');
+			this.game.debug.text(player.health, this.game.width - 50, 40, 'black', 'Arial');
 		},*/
+		paused: function() {
+			this.gen1.timer.pause();
+			this.gen2.timer.pause();
+		},
 		collision: function(player, obj) {
 			player.health -= obj.damage;
 			player.staggered(obj.damage * 15);

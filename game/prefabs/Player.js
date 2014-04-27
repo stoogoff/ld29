@@ -3,6 +3,9 @@ module.exports = (function() {
 	// imports
 	var config = require("../config");
 
+	// module vars
+	var cursors, startPosition;
+
 	// constants
 	var ACCELERATION = 500;
 	var MAX_SPEED = 200;
@@ -11,6 +14,7 @@ module.exports = (function() {
 	var DISTANCE = 3;
 	var DROWN = 1;
 	var EXERTING = 5;
+	var BREATH = 2;
 
 	// class
 	var Player = function(game, x, y, frame) {
@@ -27,7 +31,19 @@ module.exports = (function() {
 		this.body.drag.setTo(DRAG, DRAG * 2);
 
 		// start the death timer!
-		game.time.events.loop(Phaser.Timer.SECOND * 2, this.drown, this);
+		game.time.events.loop(Phaser.Timer.SECOND * 2, function() {
+			// not if the player is in a air hole
+			if(!this.breathing) {
+				this.health -= this.exerting ? EXERTING : DROWN;
+			}
+		}, this);
+
+		// breathing check
+		game.time.events.loop(Phaser.Timer.SECOND / 4, function() {
+			if(this.breathing) {
+				this.health = Phaser.Math.clamp(this.health + BREATH, 0, HEALTH);
+			}
+		}, this);
 
 		// instance vars
 		this.exerting = false;
@@ -35,23 +51,41 @@ module.exports = (function() {
 		this.health = HEALTH;
 		this.staggering = false;
 
-		this.cursors = game.input.keyboard.createCursorKeys();
-		this.startPosition = new Phaser.Point(x, y);
+		// add the bubbles last so they don't look like they're firing out of his arse
+		this.emitter = game.add.emitter(0, 0, 30);
+		this.emitter.makeParticles('bubble');
+
+		this.emitter.setYSpeed(10, 100);
+		this.emitter.setXSpeed(-10, 10);
+		this.emitter.minRotation = 0;
+		this.emitter.maxRotation = 0;
+		this.emitter.minParticleScale = 0.5;
+		this.emitter.maxParticleScale = 1.5;
+		this.emitter.gravity = 10;
+
+		// set module vars
+		cursors = game.input.keyboard.createCursorKeys();
+		startPosition = new Phaser.Point(x, y);
 	};
 
 	Player.prototype = Object.create(Phaser.Sprite.prototype);
 	Player.prototype.constructor = Player;
 
+	Player.prototype.particles = function() {
+		this.emitter.x = this.x;
+		this.emitter.y = this.y - this.height / 4;
+		this.emitter.start(true, 2000, null, 0);
+	};
+
 	Player.prototype.update = function() {
 		this.exerting = false;
+		this.particles();
 
 		if(!this.staggering)
 			this.move();
 	};
 
 	Player.prototype.move = function() {
-		var cursors = this.cursors;
-
 		// left and right movement
 		if(cursors.left.isDown) {
 			// TODO - swim sideways animation
@@ -84,9 +118,9 @@ module.exports = (function() {
 			this.exerting = true;
 		}
 		// move back to start position if not alread doing anything
-		else if(!Phaser.Math.fuzzyEqual(this.y, this.startPosition.y, DISTANCE)) {
+		else if(!Phaser.Math.fuzzyEqual(this.y, startPosition.y, DISTANCE)) {
 			// TODO - animation wants to be slower / faster depending on position
-			this.body.acceleration.y = ACCELERATION / 2 * (this.y > this.startPosition.y ? -1 : 1);
+			this.body.acceleration.y = ACCELERATION / 2 * (this.y > startPosition.y ? -1 : 1);
 		}
 		else {
 			this.body.acceleration.y =	0;
@@ -103,10 +137,8 @@ module.exports = (function() {
 		}, this);
 	};
 
-	Player.prototype.drown = function() {
-		// not if the player is in a air hole
-		if(!this.breathing)
-			this.health -= this.exerting ? EXERTING : DROWN;
+	Player.prototype.breathe = function(state) {
+		this.breathing = state === true;
 	};
 
 	return Player;

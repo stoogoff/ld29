@@ -7,6 +7,10 @@ module.exports = (function() {
 	Menu.prototype = {
 		preload: function() {},
 		create: function() {
+			var music = this.game.add.audio('theme', 1, true);
+    		
+    		music.play('', 0, 1, true);
+
 			this.game.stage.backgroundColor = config.BACKGROUND_COLOUR;
 
 			ice = this.game.add.image(0, 0, 'ice');

@@ -17,12 +17,17 @@ module.exports = (function() {
 			this.load.setPreloadSprite(this.asset);
 
 			// load pngs
-			_.each(["player", "background-texture", "fish", "rubbish"], _.bind(function(item) {
+			_.each(["player", "background-texture", "rubbish", "bubble"], _.bind(function(item) {
 				this.load.image(item, "assets/" + item + ".png");
 			}, this));
 
-			// load background
+
+			this.load.spritesheet('fish', 'assets/fish.png', 64, 104, 6);
+
+
+			// load background and audio
 			this.load.image("ice", "assets/ice.jpg");
+			this.load.audio('theme', ['assets/hidden-places.mp3', 'assets/hidden-places.ogg']);
 		},
 		create: function() {
 			this.asset.cropEnabled = false;
