@@ -18,7 +18,7 @@ module.exports = (function() {
 
 	// class
 	var Player = function(game, x, y, frame) {
-		Phaser.Sprite.call(this, game, x, y, 'player', frame);
+		Phaser.Sprite.call(this, game, x, y, 'swimmer', frame);
 
 		// set physics and game specific stuff
 		game.physics.enable(this, Phaser.Physics.ARCADE);
@@ -29,6 +29,10 @@ module.exports = (function() {
 		this.body.collideWorldBounds = true;
 		this.body.maxVelocity.setTo(MAX_SPEED, MAX_SPEED / 2);
 		this.body.drag.setTo(DRAG, DRAG * 2);
+
+		// animations
+		this.animations.add('swim');
+		this.animations.play('swim', 5, true);
 
 		// start the death timer!
 		game.time.events.loop(Phaser.Timer.SECOND * 2, function() {

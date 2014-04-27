@@ -3,24 +3,24 @@
 
 Player
 
-- Swimming
+- DONE Swimming
 - Swimming fast?
 - Swimming slow / resting
 - Dieing
 
-Ice foreground
-Water background
+DONE Ice foreground
+DONE Water background
 Air hole
 Obstacles
 
 - DONE Fish (damage)
-- Logs (smash - nudge player away)
+- DONE Logs (smash - nudge player away)
 
 
 
 # TODO
 
-Graphics
+DONE Graphics
 Audio
 
 - DONE Music

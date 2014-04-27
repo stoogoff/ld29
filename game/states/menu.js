@@ -11,18 +11,21 @@ module.exports = (function() {
     		
     		music.play('', 0, 1, true);
 
-			this.game.stage.backgroundColor = config.BACKGROUND_COLOUR;
+			this.game.stage.background = this.game.add.image(0, 0, 'sea');
 
-			ice = this.game.add.image(0, 0, 'ice');
-			ice.blendMode = Phaser.blendModes[config.BLEND_MODE];
+			var message = [
+				'See how long you can survive the icy waters.',
+				'Use the cursor keys to swim in any direction. Swimming forward against the current or pulling back will tire you, as will bumping into things. Use holes in the ice to rest and see how long you can survive.',
+				'Click anywhere to play',
+			];
 
-			var style = { font: '65px Arial', fill: '#ffffff', align: 'center'};
-
-			this.titleText = this.game.add.text(this.game.world.centerX, 300, 'Drowning Man', style);
+			this.titleText = this.game.add.text(this.game.world.centerX, 200, 'Drowning Man', config.MENU_HEADING);
 			this.titleText.anchor.setTo(0.5, 0.5);
 
-			this.instructionsText = this.game.add.text(this.game.world.centerX, 400, 'Click anywhere to play', { font: '16px Arial', fill: '#ffffff', align: 'center'});
+			this.instructionsText = this.game.add.text(this.game.world.centerX, 400, message.join('\n\n'), { font: '16px Arial', fill: '#ffffff', align: 'center'});
 			this.instructionsText.anchor.setTo(0.5, 0.5);
+			this.instructionsText.wordWrap = true;
+			this.instructionsText.wordWrapWidth = 400;
 		},
 		update: function() {
 			if(this.game.input.activePointer.justPressed()) {

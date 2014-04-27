@@ -1,5 +1,7 @@
 
 module.exports = (function() {
+	var DAMAGE = 25;
+
 	var Rubbish = function(game, x, y, frame) {
 		Phaser.Sprite.call(this, game, x, y, 'rubbish', frame);
 
@@ -9,7 +11,7 @@ module.exports = (function() {
 		this.body.velocity.y = 100 + this.game.rnd.integerInRange(-25, 25);
 
 		this.target = game.rnd.integerInRange(0, game.width);
-		this.damage = 15;
+		this.damage = DAMAGE;
 		this.rotate = this.game.rnd.integerInRange(-2, 2);
 
 		// move based on the easing of the rubbish

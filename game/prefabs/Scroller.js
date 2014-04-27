@@ -1,29 +1,60 @@
 
 module.exports = (function() {
+	// imports
 	var config = require("../config");
 
-	var addHole = function(scroller, key) {
-		var image = scroller.game.cache.getImage(scroller.key);
-		var radius = scroller.game.rnd.integerInRange(40, 100);
-		var x = scroller.game.rnd.integerInRange(0, scroller.game.width);
-		var y = scroller.game.rnd.integerInRange(0 + radius, scroller.game.height - radius);
+	// constants
+	var OPACITY = 0.8, AIRHOLE_CHANCE = 0.75, REDUCTION = 0.05;
 
-		scroller.airHoles[key] = new Phaser.Circle(scroller[key].x + x, scroller[key].y + y, radius * 2);
+	// module vars
+	var airHoleChance = AIRHOLE_CHANCE;
+
+	var drawTexture = function(scroller, key) {
+		var image = scroller.game.cache.getImage(scroller.key);
 
 		// create the texture from the old image and the circle
 		var texture = scroller.game.make.bitmapData(scroller.game.width, scroller.game.height);
 
+		// transparency
+		texture.context.globalAlpha = OPACITY;
+
 		// image data
 		texture.context.drawImage(image, 0, 0, scroller.game.width, scroller.game.height);
 
-		// the mask
-		texture.context.globalCompositeOperation = "destination-out";
+		// replace the existing image texture with the new texture
+		scroller[key].loadTexture(texture);
+	};
 
-		// circle data
-		texture.context.beginPath();
-		texture.context.fillStyle = 'rgb(255, 255, 255)';
-		texture.context.arc(x, y, radius, 0, Math.PI * 2);
-		texture.context.fill();
+	var addHole = function(scroller, key) {
+		var image = scroller.game.cache.getImage(scroller.key);
+
+		// create the texture from the old image and the circle
+		var texture = scroller.game.make.bitmapData(scroller.game.width, scroller.game.height);
+
+		// transparency
+		texture.context.globalAlpha = OPACITY;
+
+		// image data
+		texture.context.drawImage(image, 0, 0, scroller.game.width, scroller.game.height);
+
+
+		if(scroller.game.rnd.frac() < airHoleChance) {
+			// prepare the circle
+			var radius = scroller.game.rnd.integerInRange(40, 100);
+			var x = scroller.game.rnd.integerInRange(0, scroller.game.width);
+			var y = scroller.game.rnd.integerInRange(0 + radius, scroller.game.height - radius);
+
+			scroller.airHoles[key] = new Phaser.Circle(scroller[key].x + x, scroller[key].y + y, radius * 2);
+
+			// the mask
+			texture.context.globalCompositeOperation = "destination-out";
+
+			// circle data
+			texture.context.beginPath();
+			texture.context.fillStyle = 'rgb(255, 255, 255)';
+			texture.context.arc(x, y, radius, 0, Math.PI * 2);
+			texture.context.fill();
+		}
 
 		// replace the existing image texture with the new texture
 		scroller[key].loadTexture(texture);
@@ -34,13 +65,13 @@ module.exports = (function() {
 		this.key = key;
 
 		this.image = this.game.add.image(0, 0, key);
-		this.image.blendMode = Phaser.blendModes[config.BLEND_MODE];
-
 		this.buffer = this.game.add.image(0, -this.image.height, key);
-		this.buffer.blendMode = Phaser.blendModes[config.BLEND_MODE];
 
 		this.speed = speed;
 		this.airHoles = {};
+
+		drawTexture(this, 'image');
+		drawTexture(this, 'buffer');
 	};
 
 	Scroller.prototype.update = function() {
@@ -75,6 +106,10 @@ module.exports = (function() {
 		
 		player.breathe(canBreathe);
 	};
+
+	Scroller.prototype.decreaseAirHoleChance = function() {
+		airHoleChance = Phaser.Math.clamp(airHoleChance - REDUCTION, 0, AIRHOLE_CHANCE);
+	}
 
 	return Scroller;
 })();

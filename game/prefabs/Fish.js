@@ -1,5 +1,6 @@
 
 module.exports = (function() {
+	var DAMAGE = 15;
 	var easings = [Phaser.Easing.Linear.None, Phaser.Easing.Back.In, Phaser.Easing.Back.Out, Phaser.Easing.Back.InOut];
 	var Fish = function(game, x, y, frame) {
 		Phaser.Sprite.call(this, game, x, y, 'fish', frame);
@@ -14,8 +15,8 @@ module.exports = (function() {
 
 		// fish specific
 		this.easing = game.rnd.pick(easings);
-		this.target = game.rnd.integerInRange(0, game.width);;
-		this.damage = 10;
+		this.target = game.rnd.integerInRange(Phaser.Math.clamp(x - 250, 0, this.game.width), Phaser.Math.clamp(x + 250, 0, this.game.width));
+		this.damage = DAMAGE;
 
 		// move based on the easing of the fish
 		this.game.add.tween(this).to({ x: this.target }, 1500 * (1 + game.rnd.frac()), this.easing, true, 0, 1000, true);
