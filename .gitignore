@@ -3,6 +3,8 @@
 node_modules
 dist
 bower_components
+support
+assets
 
 # config and log files
 *.log
